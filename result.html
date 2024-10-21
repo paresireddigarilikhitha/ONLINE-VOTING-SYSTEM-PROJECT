@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Results Page</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        /* Navigation bar color */
+        .navbar {
+            background-color: rgba(1, 70, 120, 255);
+            height: 80px;
+            padding: 20px;
+        }
+
+        .navbar-brand {
+            font-size: 1.8rem;
+            color: rgb(255, 255, 255);
+        }
+
+        .navbar-nav .nav-link {
+            font-size: 1.2rem;
+            color: rgb(255, 255, 255);
+        }
+
+        .navbar-nav .nav-link:hover {
+            color: #d3d3d3;
+        }
+
+        .result {
+            font-weight: bold;
+            font-size: 1.5rem;
+        }
+
+        .winner {
+            margin-top: 20px;
+            font-size: 1.5rem;
+            color: green;
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg">
+        <a class="navbar-brand" href="#">Online Voting System</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a class="nav-link" id="backLink" href="#">Back</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="logoutLink" href="#">Logout</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container mt-5">
+        <h3>Voting Results</h3>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Participant Name</th>
+                    <th>Participant ID</th>
+                    <th>Votes</th>
+                    <th>Percentage</th>
+                </tr>
+            </thead>
+            <tbody id="resultsTableBody">
+                <!-- Results will be dynamically added here -->
+            </tbody>
+        </table>
+
+        <div class="winner" id="winnerAnnouncement"></div>
+    </div>
+
+    <script>
+        window.onload = function() {
+            const participants = JSON.parse(localStorage.getItem('participants')) || []; // Retrieve stored participants
+            const resultsTableBody = document.getElementById('resultsTableBody');
+            const totalVotes = participants.reduce((sum, p) => sum + p.votes, 0); // Calculate total votes
+
+            let winner = null; // Initialize winner variable
+
+            participants.forEach(participant => {
+                const percentage = totalVotes > 0 ? ((participant.votes / totalVotes) * 100).toFixed(2) + '%' : '0.00%'; // Calculate percentage
+
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${participant.name}</td>
+                    <td>${participant.id}</td>
+                    <td>${participant.votes}</td>
+                    <td>${percentage}</td>
+                `;
+                resultsTableBody.appendChild(row);
+
+                // Determine the winner
+                if (!winner || participant.votes > winner.votes) {
+                    winner = participant; // Update winner if current participant has more votes
+                }
+            });
+
+            // Display the winner if available
+            if (winner) {
+                document.getElementById('winnerAnnouncement').innerHTML = `Winner: ${winner.name} with ${winner.votes} votes!`;
+            }
+        };
+
+        // Logout functionality
+        document.getElementById("logoutLink").addEventListener("click", function (event) {
+            event.preventDefault(); // Prevent default anchor behavior
+            localStorage.removeItem("loggedInUser"); // Clear the logged-in user
+            alert("You have been logged out.");
+            window.location.href = "index.html"; // Redirect to the login page
+        });
+
+        // Back button functionality
+        document.getElementById("backLink").addEventListener("click", function (event) {
+            event.preventDefault(); // Prevent default anchor behavior
+            window.location.href = "admin.html"; // Redirect to admin page
+        });
+    </script>
+</body>
+
+</html>
