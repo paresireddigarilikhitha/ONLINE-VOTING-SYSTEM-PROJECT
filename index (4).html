@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Online Voting System</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            background-image: url('voting_img1.jpeg');
+            background-size: cover;
+            background-position: center 5%;
+            background-repeat: no-repeat;
+        }
+
+        #loginForm,
+        #registerForm,
+        #adminLoginForm {
+            display: none;
+            margin-top: 20px;
+            width: 400px;
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 20px;
+            border-radius: 10px;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.5s ease;
+        }
+
+        .form-container {
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            height: 100vh;
+            margin-top: -50px;
+            margin-left: 30px;
+        }
+
+        .form-container.active {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Add sliding animation */
+        .slide-in {
+            animation: slideIn 0.8s forwards;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateY(30px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        /* Navigation bar color */
+        .navbar {
+            background-color: rgb(23, 49, 68);
+            height: 80px;
+            padding: 20px;
+        }
+
+        .navbar-brand {
+            font-size: 1.8rem;
+            color: rgb(255, 255, 255);
+        }
+
+        .navbar-nav .nav-link {
+            font-size: 1.2rem;
+            color: white;
+        }
+
+        .navbar-nav .nav-link:hover {
+            color: #d3d3d3;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-footer {
+            margin-top: 15px;
+            font-size: 0.9rem;
+            text-align: center;
+        }
+
+        .form-footer a {
+            color: #007bff;
+            text-decoration: none;
+        }
+
+        .form-footer a:hover {
+            text-decoration: underline;
+        }
+
+        .btn-center {
+            display: block;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg">
+        <a class="navbar-brand" href="#">Online Voting System</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="#" onclick="showLoginForm()">Login</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" onclick="showRegisterForm()">Register</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" onclick="showAdminLogin()">Admin</a>
+                </li>
+                <li class="nav-item">
+                    <form class="form-inline" id="searchForm">
+                        <input class="form-control mr-2" type="search" placeholder="Search" id="searchInput" aria-label="Search">
+                        <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+                    </form>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="form-container">
+        <div id="loginForm">
+            <h3>User Login</h3>
+            <form id="userLoginForm">
+                <div class="form-group">
+                    <label for="loginUsername">Username:</label>
+                    <input type="text" class="form-control" id="loginUsername" placeholder="Enter your username" required>
+                </div>
+                <div class="form-group">
+                    <label for="loginPassword">Password:</label>
+                    <input type="password" class="form-control" id="loginPassword" placeholder="Enter your password" required>
+                </div>
+                <button type="submit" class="btn btn-primary btn-center">Login</button>
+                <div id="loginMessage" class="text-danger mt-2"></div>
+                <div class="form-footer">
+                    Don't have an account? <a href="#" onclick="showRegisterForm()">Register here</a>
+                </div>
+            </form>
+        </div>
+
+        <div id="registerForm">
+            <h3>User Register</h3>
+            <form id="userRegisterForm">
+                <div class="form-group">
+                    <label for="registerUsername">Username:</label>
+                    <input type="text" class="form-control" id="registerUsername" placeholder="Enter your username" required>
+                </div>
+                <div class="form-group">
+                    <label for="registerPassword">Password:</label>
+                    <input type="password" class="form-control" id="registerPassword" placeholder="Enter your password" required>
+                </div>
+                <div class="form-group">
+                    <label for="confirmPassword">Confirm Password:</label>
+                    <input type="password" class="form-control" id="confirmPassword" placeholder="Confirm your password" required>
+                </div>
+                <button type="submit" class="btn btn-primary btn-center">Register</button>
+                <div id="registerMessage" class="text-success mt-2"></div>
+                <div class="form-footer">
+                    Already have an account? <a href="#" onclick="showLoginForm()">Login here</a>
+                </div>
+            </form>
+        </div>
+
+        <div id="adminLoginForm">
+            <h3>Admin Login</h3>
+            <form id="adminLogin">
+                <div class="form-group">
+                    <label for="adminUsername">Username:</label>
+                    <input type="text" class="form-control" id="adminUsername" placeholder="Enter admin username" required>
+                </div>
+                <div class="form-group">
+                    <label for="adminPassword">Password:</label>
+                    <input type="password" class="form-control" id="adminPassword" placeholder="Enter admin password" required>
+                </div>
+                <button type="submit" class="btn btn-primary btn-center">Login</button>
+                <div id="adminLoginMessage" class="text-danger mt-2"></div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Simulated user database
+        let users = JSON.parse(localStorage.getItem("users")) || [];
+        const adminCredentials = {
+            username: 'admin',
+            password: 'admin123'
+        };
+
+        // Show login form by default
+        showLoginForm();
+
+        // Show forms based on user actions
+        function showLoginForm() {
+            hideAllForms();
+            const form = document.getElementById('loginForm');
+            form.classList.add('active', 'slide-in');
+            form.style.display = 'block';
+        }
+
+        function showRegisterForm() {
+            hideAllForms();
+            const form = document.getElementById('registerForm');
+            form.classList.add('active', 'slide-in');
+            form.style.display = 'block';
+        }
+
+        function showAdminLogin() {
+            hideAllForms();
+            const form = document.getElementById('adminLoginForm');
+            form.classList.add('active', 'slide-in');
+            form.style.display = 'block';
+        }
+
+        function hideAllForms() {
+            const forms = document.querySelectorAll('#loginForm, #registerForm, #adminLoginForm');
+            forms.forEach(form => {
+                form.classList.remove('active', 'slide-in');
+                form.style.display = 'none';
+            });
+        }
+
+        document.getElementById('userLoginForm').addEventListener('submit', function (event) {
+            event.preventDefault();
+            const username = document.getElementById('loginUsername').value;
+            const password = document.getElementById('loginPassword').value;
+
+            // Dummy login logic
+            if (users.some(user => user.username === username && user.password === password)) {
+                localStorage.setItem('username', username); // Store the username in localStorage
+                window.location.href = "user.html"; // Change to your user dashboard page
+            } else {
+                document.getElementById('loginMessage').innerText = 'Invalid username or password!';
+            }
+        });
+
+        document.getElementById('userRegisterForm').addEventListener('submit', function (event) {
+            event.preventDefault();
+            const username = document.getElementById('registerUsername').value;
+            const password = document.getElementById('registerPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+
+            if (password === confirmPassword) {
+                // Generate a new User ID
+                const userId = `UID${String(users.length + 1).padStart(3, '0')}`;
+                users.push({ username, password, userId });
+                localStorage.setItem('users', JSON.stringify(users)); // Save to localStorage
+                document.getElementById('registerMessage').innerText = `Registration successful!`;
+                document.getElementById('registerUsername').value = '';
+                document.getElementById('registerPassword').value = '';
+                document.getElementById('confirmPassword').value = '';
+            } else {
+                document.getElementById('registerMessage').innerText = 'Passwords do not match!';
+            }
+        });
+
+        document.getElementById('adminLogin').addEventListener('submit', function (event) {
+            event.preventDefault();
+            const username = document.getElementById('adminUsername').value;
+            const password = document.getElementById('adminPassword').value;
+
+            if (username === adminCredentials.username && password === adminCredentials.password) {
+                window.location.href = "admin.html"; // Change to your admin dashboard page
+            } else {
+                document.getElementById('adminLoginMessage').innerText = 'Invalid admin username or password!';
+            }
+        });
+
+        // Prevent the default action for the search form
+        document.getElementById('searchForm').addEventListener('submit', function (event) {
+            event.preventDefault();
+            const query = document.getElementById('searchInput').value;
+            console.log('Search query:', query);
+            // Implement search functionality here
+        });
+    </script>
+
+</body>
+
+</html>
