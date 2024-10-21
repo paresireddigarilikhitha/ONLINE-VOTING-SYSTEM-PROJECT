@@ -1,0 +1,154 @@
+<!-- This is your updated user.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Page</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        /* Navigation bar color */
+        .navbar {
+            background-color: rgba(1, 70, 120, 255);
+            height: 80px;
+            padding: 20px;
+        }
+
+        .navbar-brand {
+            font-size: 1.8rem;
+            color: rgb(255, 255, 255);
+        }
+
+        .navbar-nav .nav-link {
+            font-size: 1.2rem;
+            color: rgb(255, 255, 255);
+        }
+
+        .navbar-nav .nav-link:hover {
+            color: #d3d3d3;
+        }
+
+        .user-profile {
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg">
+        <a class="navbar-brand" href="#">Online Voting System</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <form class="form-inline ml-auto" id="searchForm">
+                <input class="form-control mr-sm-2" type="search" placeholder="Search" id="searchInput" aria-label="Search">
+                <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+            </form>
+            <ul class="navbar-nav ml-2">
+                <li class="nav-item">
+                    <a class="nav-link" href="index.html">Logout</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container mt-5">
+        <div class="user-profile">
+            <h5>User Profile</h5>
+            <p id="usernameDisplay"></p>
+            <p id="userIdDisplay"></p> <!-- User ID display -->
+        </div>
+        <h3>Vote for Participants</h3>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>S.No</th>
+                    <th>Participant Name</th>
+                    <th>Participant ID</th>
+                    <th>Vote</th>
+                </tr>
+            </thead>
+            <tbody id="participantsTableBody">
+                <!-- Participants will be dynamically added here -->
+            </tbody>
+        </table>
+        
+        <!-- View Results Button -->
+        <button id="viewResultsButton" class="btn btn-success">View Results</button>
+    </div>
+
+    <script>
+        let participants = JSON.parse(localStorage.getItem('participants')) || [
+            { name: 'Participant 1', id: 'P1', votes: 0 },
+            { name: 'Participant 2', id: 'P2', votes: 0 },
+            { name: 'Participant 3', id: 'P3', votes: 0 },
+            { name: 'Participant 4', id: 'P4', votes: 0 },
+            { name: 'Participant 5', id: 'P5', votes: 0 },
+            { name: 'Participant 6', id: 'P6', votes: 0 },
+        ];
+
+        let userVotes = 0; // Track user votes
+
+        const username = localStorage.getItem('username');
+        const users = JSON.parse(localStorage.getItem('users')) || [];
+        const user = users.find(u => u.username === username);
+
+        document.getElementById('usernameDisplay').innerText = username ? `Username: ${username}` : 'No user logged in';
+        document.getElementById('userIdDisplay').innerText = user ? `User ID: ${user.userId}` : '';
+
+        function renderParticipants(filteredParticipants = participants) {
+            const tableBody = document.getElementById('participantsTableBody');
+            tableBody.innerHTML = ''; // Clear the table before rendering
+            filteredParticipants.forEach((participant, index) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td>${participant.name}</td>
+                    <td>${participant.id}</td>
+                    <td><button class="btn btn-primary" onclick="vote(${index})">Vote</button></td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }
+
+        function vote(index) {
+            const votingStatus = localStorage.getItem('votingStatus'); // Get voting status from localStorage
+            if (votingStatus === 'open') { // Check if voting is open
+                if (userVotes < 5) {
+                    participants[index].votes++; // Increment votes for the participant
+                    localStorage.setItem('participants', JSON.stringify(participants)); // Update localStorage
+                    userVotes++; // Increment user's vote count
+                    renderParticipants(); // Re-render the participants to show updated votes
+                } else {
+                    alert("You can only vote for up to 5 participants.");
+                }
+            } else {
+                alert("Voting is currently closed."); // Display alert if voting is closed
+            }
+        }
+
+        // Search functionality
+        document.getElementById('searchForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const filteredParticipants = participants.filter(participant => 
+                participant.name.toLowerCase().includes(searchTerm)
+            );
+            renderParticipants(filteredParticipants);
+        });
+
+        // View Results button functionality
+        document.getElementById('viewResultsButton').addEventListener('click', function() {
+            const publishStatus = localStorage.getItem('publishStatus'); // Check publish status
+            if (publishStatus === 'published') {
+                window.location.href = "user-result.html"; // Redirect to results page
+            } else {
+                alert("Results are not published yet. Please check back later."); // Display alert if results are not published
+            }
+        });
+
+        // Initial render of participants
+        renderParticipants(participants);
+    </script>
+</body>
+</html>
